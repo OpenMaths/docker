@@ -3,7 +3,7 @@ FROM alpine:3.6
 RUN apk update
 
 # Install some key utilities; useful to have on the build agent.
-RUN apk add --no-cache make curl git
+RUN apk add --no-cache make curl
 RUN apk add --no-cache net-tools
 
 # Install Node. See https://github.com/nodejs/docker-node/blob/master/8/alpine/Dockerfile.
