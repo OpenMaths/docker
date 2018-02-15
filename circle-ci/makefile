@@ -1,5 +1,5 @@
 namespace=openmaths
-image_name=base
+image_name=circle-ci
 
 build:
 	docker build -t ${namespace}/${image_name} .

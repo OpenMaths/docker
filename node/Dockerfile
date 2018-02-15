@@ -1,34 +1,15 @@
-FROM docker:latest
+FROM alpine:3.6
 
-# Install some key utilities it is useful to have on the build agent.
+RUN apk update
+
+# Install some key utilities; useful to have on the build agent.
 RUN apk add --no-cache make curl git
-
-# Install GCloud SDK. See https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
-ENV CLOUD_SDK_VERSION 181.0.0
-ENV PATH /google-cloud-sdk/bin:$PATH
-
-RUN apk --no-cache add \
-        curl \
-        python \
-        py-crcmod \
-        bash \
-        libc6-compat \
-        openssh-client \
-        git \
-    && curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
-    tar xzf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
-    rm google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
-    ln -s /lib /lib64 && \
-    gcloud config set core/disable_usage_reporting true && \
-    gcloud config set component_manager/disable_update_check true && \
-    gcloud config set metrics/environment github_docker_image && \
-    gcloud --version
-
-VOLUME ["/root/.config"]
+RUN apk add --no-cache net-tools
 
 # Install Node. See https://github.com/nodejs/docker-node/blob/master/8/alpine/Dockerfile.
 # gpg keys listed at https://github.com/nodejs/node#release-team
-ENV NODE_VERSION 8.9.1
+ENV NODE_VERSION 8.9.4
+
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
     && apk add --no-cache \
@@ -53,9 +34,10 @@ RUN addgroup -g 1000 node \
     56730D5401028683275BD23C23EFEFE93C4CFFFE \
     77984A986EBC2AA786BC0F66B01FBB92821C587A \
   ; do \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
-    gpg --keyserver keyserver.pgp.com --recv-keys "$key" || \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" ; \
+    gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" || \
+    gpg --keyserver hkp://keyserver.pgp.com:80 --recv-keys "$key" || \
+    gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" ; \
   done \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
     && curl -SLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -71,4 +53,4 @@ RUN addgroup -g 1000 node \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
-CMD [ "sh" ]
+CMD [ "node" ]
