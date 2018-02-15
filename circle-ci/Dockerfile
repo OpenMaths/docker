@@ -3,8 +3,9 @@ FROM docker:latest
 RUN apk update
 
 # Install some key utilities it is useful to have on the build agent.
-RUN apk add --no-cache make curl git
+RUN apk add --no-cache make curl git openssh
 RUN apk add --no-cache net-tools
+RUN apk add --no-cache bash grep
 
 # Install Node. See https://github.com/nodejs/docker-node/blob/master/8/alpine/Dockerfile.
 # gpg keys listed at https://github.com/nodejs/node#release-team
@@ -53,4 +54,4 @@ RUN addgroup -g 1000 node \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
-CMD [ "sh" ]
+CMD [ "bash" ]
