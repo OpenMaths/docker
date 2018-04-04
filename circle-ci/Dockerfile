@@ -4,11 +4,13 @@ RUN apk update
 
 # Install some key utilities it is useful to have on the build agent.
 RUN apk add --no-cache \
-  make curl git openssh bash grep gnupg net-tools dpkg
+  make curl git openssh bash grep gnupg net-tools dpkg shadow
 
-# Install Node. See https://github.com/nodejs/docker-node/blob/master/8/alpine/Dockerfile.
+RUN groupadd --gid 1000 node \
+  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+
+# https://github.com/nodejs/docker-node/blob/d5badac9d19e01d12d446a556c344aba66ed6b96/9/Dockerfile
 # gpg keys listed at https://github.com/nodejs/node#release-team
-
 RUN set -ex \
   && for key in \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
